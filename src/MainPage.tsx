@@ -12,19 +12,16 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import Link from '@material-ui/core/Link';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link
+} from "react-router-dom";
+import NavBar from "./AppBar";
 
-function Copyright() {
-    return (
-        <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="https://material-ui.com/">
-                Your Website
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
+interface MainPageProps {
+    username: string;
 }
 
 const useStyles = makeStyles(theme => ({
@@ -63,42 +60,46 @@ const useStyles = makeStyles(theme => ({
     logOutButton: {
        display: 'flex',
        flexDirection: "column",
-        alignItems: 'right',
-        backgroundColor: "white",
+       alignItems: 'right',
     },
+    usersData: {
+        display: 'flex',
+        flexDirection: 'row',
+        "& *": {
+            display: 'inline-block',
+        }
+    },
+    toolbar: {
+      display: 'flex',
+      flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    createButton: {
+        marginBottom: theme.spacing(8),
+        backgroundColor: 'grey',
+        padding: theme.spacing(4),
+    }
 }));
 
 const cards = [1, 2];
 
-export default function MainPage() {
+export default function MainPage(props: MainPageProps) {
     const classes = useStyles();
 
     return (
         <React.Fragment>
             <CssBaseline />
-            <AppBar position="relative" style={{display: "flex"}}>
-                <Toolbar>
-                    <AccountCircle className={classes.icon} />
-                    <Typography variant="h6" color="inherit" noWrap>
-                        User's Shopping Lists
-                    </Typography>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        className={classes.logOutButton}
-                    >
-                        <Link href={"/signIn"}  >
-                        Log out
-                        </Link>
-                    </Button>
-                </Toolbar>
-            </AppBar>
+            <NavBar username={props.username}/>
             <main>
                 <Container className={classes.cardGrid} >
+                    <Link to={"/createList"}>
+                        <Button fullWidth className={classes.createButton}>
+                            Create
+                        </Button>
+                    </Link>
                     <Grid container spacing={8} >
                         {cards.map(card => (
-                            <Grid item key={card} xs={12} sm={6} md={4}>
+                            <Grid item key={card} xs={6} sm={6} md={6}>
                                 <Card className={classes.card}>
                                     <CardMedia
                                         className={classes.cardMedia}
@@ -111,26 +112,21 @@ export default function MainPage() {
                                         </Typography>
                                         <Typography>
                                             {card.toString() === "1" ?
-                                            "Look at your own amazing lists and get to know what you have to by today!" :
+                                            "Look at your own amazing lists and get to know what you have to buy today!" :
                                             "Interested in other's lists? Get a look at what your friends shared with you!"}
                                         </Typography>
                                     </CardContent>
                                     <CardActions>
+                                        <Link to={card.toString() === "1" ? "/myLists" : "/sharedLists"}>
                                         <Button size="small" color="primary" fullWidth>
-                                            <Link href={card.toString() === "1" ? "/myLists" : "/sharedLists"}>
                                             GO
-                                            </Link>
                                         </Button>
+                                        </Link>
                                     </CardActions>
                                 </Card>
                             </Grid>
                         ))}
                     </Grid>
-                    <Button fullWidth>
-                        <Link href={"/editList"}>
-                        Create
-                        </Link>
-                    </Button>
                 </Container>
             </main>
         </React.Fragment>
